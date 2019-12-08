@@ -4,3 +4,7 @@
 .classpath
 /build/*
 *.log
+.idea/*
+*.iml
+*.ipr
+*.iws
