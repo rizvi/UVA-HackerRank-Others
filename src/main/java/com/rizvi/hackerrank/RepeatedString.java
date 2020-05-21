@@ -52,11 +52,16 @@ public class RepeatedString {
 			divisorMapFull.forEach((key, value) -> {
 				System.out.println("Key : " + key + " Value : " + value);
 			});
+			// For checking max value from full collections
 //			return Collections.max(divisorMapFull.values());
+
+			// For checking only number of a
 			return divisorMapFull.get('a') == null ? 0 : divisorMapFull.get('a');
 		}
-
+        // For checking max value from full collections
 //		return Collections.max(divisorMap.values());
+
+		// for checking only number of a
 		return divisorMap.get('a') == null ? 0 : divisorMap.get('a');
 	}
 
