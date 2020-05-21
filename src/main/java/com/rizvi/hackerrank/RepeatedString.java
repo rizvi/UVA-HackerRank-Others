@@ -16,46 +16,81 @@ public class RepeatedString {
 
 	// Complete the repeatedString function below.
 	static long repeatedString(String s, long n) {
-		String fullString = prepareFullString(s, n);
-		System.out.println("fullString is: " + fullString);
-
-		HashMap<Character, Integer> countDuplicateMap = new HashMap<>();
-		HashSet<Character> dataSet = new HashSet();
-		int count = 1;
-		for (int i = 0; i < fullString.length(); i++) {
-			if (dataSet.add(fullString.charAt(i)) == false) {
-				if (countDuplicateMap.get(fullString.charAt(i)) == null) {
-					countDuplicateMap.put(fullString.charAt(i), 1);
-					if(1 > count) count = 1;
-				} else {
-					int newLengthOfString = countDuplicateMap.get(fullString.charAt(i)) + 1;
-					countDuplicateMap.put(fullString.charAt(i), newLengthOfString);
-					if(newLengthOfString > count) {
-						count = newLengthOfString;
-					}
-				}
-			} else {
-				countDuplicateMap.put(fullString.charAt(i), 1);
-				if(1 > count) count = 1;
-			}
-		}
-		return count;
+		return initialize(s, n);
 
 	}
 
-	private static String prepareFullString(String s, long n) {
-		int strlength = s.length();
-		long numberOfPartition = n / strlength;
-		System.out.println("numberOfPartition: " + numberOfPartition);
-		long remaining = n % strlength;
-		System.out.println("Remaining: " + remaining);
-		String newString = "";
-		StringBuilder sb = new StringBuilder();
-		for (long i = 0; i < numberOfPartition; i++) {
-			sb = sb.append(s);
+	private static long initialize(String s, long n) {
+		int strLength = s.length();
+		System.out.println("strLength: " + strLength);
+		if (strLength > 100) {
+			System.out.println("return strLength");
+			return 0;
 		}
-		sb = sb.append(s.substring(0, Math.toIntExact(remaining)));
+
+		if (n > 1000000000000l) {
+			System.out.println("return actual length");
+			return 0;
+		}
+		long quotient = n / strLength; // quotient = numberOfPartition
+		System.out.println("quotient: " + quotient);
+
+		long remainder = n % strLength;
+		System.out.println("remainder: " + remainder);
+
+		HashMap<Character, Long> divisorMap = prepareDivisorMap(s);
+		divisorMap.forEach((key, value) -> {
+			value = value * quotient;
+			divisorMap.put(key, value);
+			//System.out.println("Key : " + key + " Value : " + value);
+		});
+
+		String remainingString = prepareRemainingString(s, remainder);
+		HashMap<Character, Long> divisorMapFull = new HashMap<>();
+		if (remainder > 0) {
+			divisorMapFull = prepareDivisorMap(remainingString, divisorMap);
+			divisorMapFull.forEach((key, value) -> {
+				System.out.println("Key : " + key + " Value : " + value);
+			});
+//			return Collections.max(divisorMapFull.values());
+			return divisorMapFull.get('a') == null ? 0 : divisorMapFull.get('a');
+		}
+
+//		return Collections.max(divisorMap.values());
+		return divisorMap.get('a') == null ? 0 : divisorMap.get('a');
+	}
+
+	private static HashMap<Character, Long> prepareDivisorMap(String remainingString, HashMap<Character, Long> divisorMap) {
+		HashMap<Character, Long> newDivisorMap = divisorMap;
+		for (int i = 0; i < remainingString.length(); i++) {
+			long newLengthOfString = newDivisorMap.get(remainingString.charAt(i)) + 1;
+			newDivisorMap.put(remainingString.charAt(i), newLengthOfString);
+		}
+		return newDivisorMap;
+	}
+
+	private static String prepareRemainingString(String s, long remainder) {
+		StringBuilder sb = new StringBuilder();
+		sb = sb.append(s.substring(0, Math.toIntExact(remainder)));
 		return sb.toString();
+	}
+
+	private static HashMap<Character, Long> prepareDivisorMap(String fullString) {
+		HashMap<Character, Long> divisorMap = new HashMap<>();
+		HashSet<Character> dataSet = new HashSet();
+		for (int i = 0; i < fullString.length(); i++) {
+			if (dataSet.add(fullString.charAt(i)) == false) {
+				if (divisorMap.get(fullString.charAt(i)) == null) {
+					divisorMap.put(fullString.charAt(i), 1l);
+				} else {
+					long newLengthOfString = divisorMap.get(fullString.charAt(i)) + 1;
+					divisorMap.put(fullString.charAt(i), newLengthOfString);
+				}
+			} else {
+				divisorMap.put(fullString.charAt(i), 1l);
+			}
+		}
+		return divisorMap;
 	}
 
 	private static final Scanner scanner = new Scanner(System.in);
@@ -78,3 +113,12 @@ public class RepeatedString {
 //		scanner.close();
 	}
 }
+
+/*
+Hacker Rank problem: https://www.hackerrank.com/challenges/repeated-string/problem?h_l=interview&playlist_slugs%5B%5D%5B%5D=interview-preparation-kit&playlist_slugs%5B%5D%5B%5D=warmup
+d
+590826798023
+
+epsxyyflvrrrxzvnoenvpegvuonodjoxfwdmcvwctmekpsnamchznsoxaklzjgrqruyzavshfbmuhdwwmpbkwcuomqhiyvuztwvq
+549382313570
+ */
